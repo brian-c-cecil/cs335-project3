@@ -9,13 +9,15 @@ public class gridPanel extends JPanel {
     private static int defaultSize = 220;
     private int sizeX = defaultSize;
     private int sizeY = defaultSize;
-    private int rows = 10;
-    private int cols = 10;
+    private int rows;
+    private int cols;
 
     private controlPoint[][] controlPoints;
 
     //Default Constructor
-    public gridPanel(){
+    public gridPanel(int x, int y){
+        rows = x;
+        cols = y;
 
         controlPoints = new controlPoint[rows][cols];
 

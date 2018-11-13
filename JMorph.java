@@ -19,8 +19,7 @@ public class JMorph {
 
         buildMenus();
         buildControls();
-
-        //add grids
+        buildGrids();
 
         frame.pack();
         frame.setVisible(true);
@@ -149,5 +148,11 @@ public class JMorph {
             }
         });
         //controlPanel.add(morphButton);
+    }
+
+    private void buildGrids(){
+      panelHandler handler = new panelHandler(gridResolution, gridResolution);
+      frame.add(handler.panel1);
+      frame.add(handler.panel2);
     }
 }
