@@ -1,28 +1,28 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
 
 public class controlPoint extends JButton {
 
-    private int xPos;
-    private int yPos;
+    public int xPos;
+    public int yPos;
 
-    private int xID;
-    private int yID;
+    public controlPoint east;
+    public controlPoint south;
+    public controlPoint southeast;
 
-    private controlPoint east;
-    private controlPoint south;
-    private controlPoint southeast;
+    public int eLocx;
+    public int sLocx;
+    public int seLocx;
+
+    public int eLocy;
+    public int sLocy;
+    public int seLocy;
 
     private boolean isActive = false;
 
-    public controlPoint(int x, int y, int xid, int yid){
+    public controlPoint(int x, int y){
         xPos = x;
         yPos = y;
-        xID = xid;
-        yID = yid;
 
         setBounds(xPos, yPos, 10, 10);
 
@@ -43,41 +43,16 @@ public class controlPoint extends JButton {
         return yPos;
     }
 
-    public int getxID(){
-        return xID;
-    }
-
-    public int getyID(){
-        return yID;
-    }
-
     public void setEastNeighbor(controlPoint en){
         east = en;
     }
 
-    public void setSouthNeighor(controlPoint sn){
+    public void setSouthNeighbor(controlPoint sn){
         south = sn;
     }
 
-    public void setSouthEastNeighor(controlPoint sen){
+    public void setSouthEastNeighbor(controlPoint sen){
         southeast = sen;
-    }
-
-    public controlPoint getEastNeighbor(){
-        return east;
-    }
-
-    public controlPoint getSouthNeighbor(){
-        return south;
-    }
-
-    public controlPoint getSouthEastNeighbor(){
-        return southeast;
-    }
-
-    public void setLocation(int x, int y){
-        xPos = x;
-        yPos = y;
     }
 
     public void setActive(){
@@ -86,5 +61,25 @@ public class controlPoint extends JButton {
 
     public void setInactive(){
         isActive = false;
+    }
+
+    public void setLocation(int x, int y){
+        xPos = x;
+        yPos = y;
+    }
+
+    public void relocate(){
+        setBounds(xPos, yPos, 10, 10);
+    }
+
+    public void setNeighborLocations(){
+        eLocx = east.getxPos();
+        eLocy = east.getyPos();
+
+        sLocx = south.getxPos();
+        sLocy = south.getyPos();
+
+        seLocx = southeast.getxPos();
+        seLocy = southeast.getyPos();
     }
 }

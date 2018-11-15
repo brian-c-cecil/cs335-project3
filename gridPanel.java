@@ -35,7 +35,7 @@ public class gridPanel extends JPanel {
         //Create the control points
         for (int i = 0; i < rows+2; i++){
             for (int j = 0; j < cols+2; j++){
-                controlPoints[i][j] = new controlPoint((i * xSpacing) - 5, (j * ySpacing) - 5, i, j);
+                controlPoints[i][j] = new controlPoint((i * xSpacing) - 5, (j * ySpacing) - 5);
                 add(controlPoints[i][j]);
             }
         }
@@ -50,31 +50,34 @@ public class gridPanel extends JPanel {
     public void setNeighbors(){
         for(int i = 0; i < rows+1; i++){
             for (int j = 0; j < cols+1; j++){
-                controlPoints[i][j].setSouthNeighor(controlPoints[i][j+1]);
+                controlPoints[i][j].setSouthNeighbor(controlPoints[i][j+1]);
                 controlPoints[i][j].setEastNeighbor(controlPoints[i+1][j]);
-                controlPoints[i][j].setSouthEastNeighor(controlPoints[i+1][j+1]);
+                controlPoints[i][j].setSouthEastNeighbor(controlPoints[i+1][j+1]);
+
+                controlPoints[i][j].setNeighborLocations();
             }
         }
     }
 
     //Redraw the pic and then the grid
     protected void paintComponent(Graphics g){
+        super.paintComponent(g);
+        //draw the shit
         int x1, x2, y1, y2;
-
-        //definitely need some neighbor stuff here
-        for (int i = 0; i < rows+2; i++){
-            for (int j = 0; j < cols+2; j++){
-                x1 = controlPoints[i][j].getxPos() + 5;
-                y1 = controlPoints[i][j].getyPos() + 5;
-                x2 = x1 + xSpacing;
-                y2 = y1 + ySpacing;
+        for (int i = 0; i < rows+1; i++){
+            for (int j = 0; j < cols+1; j++){
+                x1 = controlPoints[i][j].xPos + 5;
+                y1 = controlPoints[i][j].yPos + 5;
+                x2 = controlPoints[i][j].east.getxPos() + 5;
+                y2 = controlPoints[i][j].east.getyPos() + 5;
                 g.drawLine(x1, y1, x2, y2);
 
-                x2 = x1;
+                x2 = controlPoints[i][j].south.getxPos() + 5;
+                y2 = controlPoints[i][j].south.getyPos() + 5;
                 g.drawLine(x1, y1, x2, y2);
 
-                x2 = x1 + xSpacing;
-                y2 = y1;
+                x2 = controlPoints[i][j].southeast.getxPos() + 5;
+                y2 = controlPoints[i][j].southeast.getyPos() + 5;
                 g.drawLine(x1, y1, x2, y2);
             }
         }
@@ -82,6 +85,10 @@ public class gridPanel extends JPanel {
 
     public controlPoint[][] getPoints(){
         return controlPoints;
+    }
+
+    public void drawStuff(){
+        repaint();
     }
 }
 
