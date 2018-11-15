@@ -68,8 +68,8 @@ public class panelHandler extends JPanel {
                     @Override
                     public void mouseReleased(MouseEvent e) {
                         controlPoint clickedPoint = (controlPoint)e.getSource();
-                        int tempX = clickedPoint.getxPos();
-                        int tempY = clickedPoint.getyPos();
+                        int tempX = clickedPoint.getRowID();
+                        int tempY = clickedPoint.getColID();
 
                         p1[tempX][tempY].setInactive();
                         p2[tempX][tempY].setInactive();
@@ -100,8 +100,8 @@ public class panelHandler extends JPanel {
                     @Override
                     public void mousePressed(MouseEvent e) {
                         controlPoint clickedPoint = (controlPoint)e.getSource();
-                        int tempX = clickedPoint.getxPos();
-                        int tempY = clickedPoint.getyPos();
+                        int tempX = clickedPoint.getRowID();
+                        int tempY = clickedPoint.getColID();
 
                         p2[tempX][tempY].setActive();
                         p1[tempX][tempY].setActive();
