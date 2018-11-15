@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -15,6 +16,8 @@ public class controlPoint extends JButton {
     private controlPoint south;
     private controlPoint southeast;
 
+    private boolean isActive = false;
+
     public controlPoint(int x, int y, int xid, int yid){
         xPos = x;
         yPos = y;
@@ -22,6 +25,14 @@ public class controlPoint extends JButton {
         yID = yid;
 
         setBounds(xPos, yPos, 10, 10);
+
+        //set it red
+        if (isActive){
+            setBackground(Color.red);
+        }
+        else{
+            setBackground(Color.black);
+        }
     }
 
     public int getxPos() {
@@ -62,5 +73,18 @@ public class controlPoint extends JButton {
 
     public controlPoint getSouthEastNeighbor(){
         return southeast;
+    }
+
+    public void setLocation(int x, int y){
+        xPos = x;
+        yPos = y;
+    }
+
+    public void setActive(){
+        isActive = true;
+    }
+
+    public void setInactive(){
+        isActive = false;
     }
 }

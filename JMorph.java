@@ -152,7 +152,6 @@ public class JMorph {
 
     private void buildGrids(){
       panelHandler handler = new panelHandler(gridResolution, gridResolution);
-      frame.add(handler.panel1);
-      frame.add(handler.panel2);
+      frame.add(handler);
     }
 }
