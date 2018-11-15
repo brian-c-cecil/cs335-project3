@@ -7,6 +7,7 @@ import java.awt.event.WindowEvent;
 
 public class JMorph {
     JFrame frame;
+    JPanel mainPanel;
     int animationDuration = 1;
     int gridResolution = 10;
 
@@ -16,6 +17,9 @@ public class JMorph {
 
     public JMorph(){
         frame = new JFrame("JMorph");
+        mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
+        frame.add(mainPanel);
 
         buildMenus();
         buildControls();
@@ -129,7 +133,7 @@ public class JMorph {
     private void buildControls(){
         JPanel controlPanel = new JPanel();
         controlPanel.setLayout(new FlowLayout());
-        frame.add(controlPanel);
+        mainPanel.add(controlPanel);
 
         JButton previewButton = new JButton("Preview");
         previewButton.addActionListener(new ActionListener() {
@@ -151,7 +155,7 @@ public class JMorph {
     }
 
     private void buildGrids(){
-      panelHandler handler = new panelHandler(gridResolution, gridResolution);
-      frame.add(handler);
+        panelHandler handler = new panelHandler(gridResolution, gridResolution);
+        mainPanel.add(handler);
     }
 }

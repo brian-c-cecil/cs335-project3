@@ -42,16 +42,24 @@ public class panelHandler extends JPanel {
                 p1[x][y].addMouseMotionListener(new MouseMotionAdapter() {
                     @Override
                     public void mouseDragged(MouseEvent e) {
-                        setLocation(e.getX() + p1[x][y].getxPos() - 5, e.getY() + p1[x][y].getyPos() - 5);
-                        p1[x][y].relocate();
+                        controlPoint clickedPoint = (controlPoint)e.getSource();
+                        int tempX = clickedPoint.getRowID();
+                        int tempY = clickedPoint.getColID();
+
+                        p1[tempX][tempY].setLocation(e.getX() + p1[tempX][tempY].getxPos() - 5, e.getY() + p1[tempX][tempY].getyPos() - 5);
+                        p1[tempX][tempY].relocate();
                         panel1.drawStuff();
                     }
                 });
                 p1[x][y].addMouseListener(new MouseAdapter() {
                     @Override
                     public void mousePressed(MouseEvent e) {
-                        p1[x][y].setActive();
-                        p2[x][y].setActive();
+                        controlPoint clickedPoint = (controlPoint)e.getSource();
+                        int tempX = clickedPoint.getRowID();
+                        int tempY = clickedPoint.getColID();
+
+                        p1[tempX][tempY].setActive();
+                        p2[tempX][tempY].setActive();
                         panel1.drawStuff();
                         panel2.drawStuff();
                     }
@@ -59,8 +67,12 @@ public class panelHandler extends JPanel {
                 p1[x][y].addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseReleased(MouseEvent e) {
-                        p1[x][y].setInactive();
-                        p2[x][y].setInactive();
+                        controlPoint clickedPoint = (controlPoint)e.getSource();
+                        int tempX = clickedPoint.getxPos();
+                        int tempY = clickedPoint.getyPos();
+
+                        p1[tempX][tempY].setInactive();
+                        p2[tempX][tempY].setInactive();
                         panel1.drawStuff();
                         panel2.drawStuff();
                     }
@@ -75,16 +87,24 @@ public class panelHandler extends JPanel {
                 p2[x][y].addMouseMotionListener(new MouseMotionAdapter() {
                     @Override
                     public void mouseDragged(MouseEvent e) {
-                        setLocation(e.getX() + p2[x][y].getxPos() - 5, e.getY() + p2[x][y].getyPos() - 5);
-                        p2[x][y].relocate();
+                        controlPoint clickedPoint = (controlPoint)e.getSource();
+                        int tempX = clickedPoint.getRowID();
+                        int tempY = clickedPoint.getColID();
+
+                        p2[tempX][tempY].setLocation(e.getX() + p2[tempX][tempY].getxPos() - 5, e.getY() + p2[tempX][tempY].getyPos() - 5);
+                        p2[tempX][tempY].relocate();
                         panel2.drawStuff();
                     }
                 });
                 p2[x][y].addMouseListener(new MouseAdapter() {
                     @Override
                     public void mousePressed(MouseEvent e) {
-                        p2[x][y].setActive();
-                        p1[x][y].setActive();
+                        controlPoint clickedPoint = (controlPoint)e.getSource();
+                        int tempX = clickedPoint.getxPos();
+                        int tempY = clickedPoint.getyPos();
+
+                        p2[tempX][tempY].setActive();
+                        p1[tempX][tempY].setActive();
                         panel1.drawStuff();
                         panel2.drawStuff();
                     }
@@ -92,8 +112,12 @@ public class panelHandler extends JPanel {
                 p2[x][y].addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseReleased(MouseEvent e) {
-                        p2[x][y].setInactive();
-                        p1[x][y].setInactive();
+                        controlPoint clickedPoint = (controlPoint)e.getSource();
+                        int tempX = clickedPoint.getRowID();
+                        int tempY = clickedPoint.getColID();
+
+                        p2[tempX][tempY].setInactive();
+                        p1[tempX][tempY].setInactive();
                         panel1.drawStuff();
                         panel2.drawStuff();
                     }

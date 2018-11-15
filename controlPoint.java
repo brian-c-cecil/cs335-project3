@@ -5,6 +5,8 @@ public class controlPoint extends JButton {
 
     public int xPos;
     public int yPos;
+    private int rowID;
+    private int colID;
 
     public controlPoint east;
     public controlPoint south;
@@ -33,6 +35,22 @@ public class controlPoint extends JButton {
         else{
             setBackground(Color.black);
         }
+    }
+
+    public int getRowID(){
+        return rowID;
+    }
+
+    public void setRowID(int rowID) {
+        this.rowID = rowID;
+    }
+
+    public int getColID(){
+        return colID;
+    }
+
+    public void setColID(int colID){
+        this.colID = colID;
     }
 
     public int getxPos() {

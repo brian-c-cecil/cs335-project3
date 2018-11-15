@@ -7,7 +7,7 @@ public class gridPanel extends JPanel {
     private BufferedImage pic;
     public boolean drawimage = false;
 
-    private static int defaultSize = 880;
+    private static int defaultSize = 500;
     private int sizeX = defaultSize;
     private int sizeY = defaultSize;
     private int rows;
@@ -36,6 +36,8 @@ public class gridPanel extends JPanel {
         for (int i = 0; i < rows+2; i++){
             for (int j = 0; j < cols+2; j++){
                 controlPoints[i][j] = new controlPoint((i * xSpacing) - 5, (j * ySpacing) - 5);
+                controlPoints[i][j].setRowID(i);
+                controlPoints[i][j].setColID(j);
                 add(controlPoints[i][j]);
             }
         }
