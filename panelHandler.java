@@ -13,10 +13,16 @@ public class panelHandler extends JPanel {
     private int x;
     private int y;
 
+    private boolean edgeflag1;
+    private boolean edgeflag2;
+
     public panelHandler(int x, int y){
 
         xSize = x;
         ySize = y;
+
+        edgeflag1 = false;
+        edgeflag2 = false;
 
         makeGrids();
 
@@ -46,9 +52,32 @@ public class panelHandler extends JPanel {
                         int tempX = clickedPoint.getRowID();
                         int tempY = clickedPoint.getColID();
 
-                        p1[tempX][tempY].setLocation(e.getX() + p1[tempX][tempY].getxPos() - 5, e.getY() + p1[tempX][tempY].getyPos() - 5);
-                        p1[tempX][tempY].relocate();
-                        panel1.drawStuff();
+                        //Get distance to n, get dist to ne
+                        //check to see if dist n + dist ne  = dist n-> ne
+
+                        double NtoE = Dist(p1[tempX][tempY].north, p1[tempX][tempY].east);
+                        double EtoSE = Dist(p1[tempX][tempY].east, p1[tempX][tempY].southeast);
+                        double SEtoS = Dist(p1[tempX][tempY].southeast, p1[tempX][tempY].south);
+                        double StoW = Dist(p1[tempX][tempY].south, p1[tempX][tempY].west);
+                        double WtoNW = Dist(p1[tempX][tempY].west, p1[tempX][tempY].northwest);
+                        double NWtoN = Dist(p1[tempX][tempY].northwest, p1[tempX][tempY].north);
+
+                        double toN = Dist(p1[tempX][tempY], p1[tempX][tempY].north);
+                        double toE = Dist(p1[tempX][tempY], p1[tempX][tempY].east);
+                        double toSE = Dist(p1[tempX][tempY], p1[tempX][tempY].southeast);
+                        double toS = Dist(p1[tempX][tempY], p1[tempX][tempY].south);
+                        double toW = Dist(p1[tempX][tempY], p1[tempX][tempY].west);
+                        double toNW = Dist(p1[tempX][tempY], p1[tempX][tempY].northwest);
+
+                        if(toN + toE == NtoE || toE + toSE == EtoSE || toSE + toS == SEtoS || toS + toW == StoW || toW + toNW == WtoNW || toNW + toN == NWtoN){
+                            edgeflag1 = true;
+                        }
+
+                        if (!edgeflag1) {
+                            p1[tempX][tempY].setLocation(e.getX() + p1[tempX][tempY].getxPos() - 5, e.getY() + p1[tempX][tempY].getyPos() - 5);
+                            p1[tempX][tempY].relocate();
+                            panel1.drawStuff();
+                        }
                     }
                 });
                 p1[x][y].addMouseListener(new MouseAdapter() {
@@ -75,6 +104,7 @@ public class panelHandler extends JPanel {
                         p2[tempX][tempY].setInactive();
                         panel1.drawStuff();
                         panel2.drawStuff();
+                        edgeflag1 = false;
                     }
                 });
             }
@@ -91,9 +121,28 @@ public class panelHandler extends JPanel {
                         int tempX = clickedPoint.getRowID();
                         int tempY = clickedPoint.getColID();
 
-                        p2[tempX][tempY].setLocation(e.getX() + p2[tempX][tempY].getxPos() - 5, e.getY() + p2[tempX][tempY].getyPos() - 5);
-                        p2[tempX][tempY].relocate();
-                        panel2.drawStuff();
+                        double NtoE = Dist(p2[tempX][tempY].north, p2[tempX][tempY].east);
+                        double EtoSE = Dist(p2[tempX][tempY].east, p2[tempX][tempY].southeast);
+                        double SEtoS = Dist(p2[tempX][tempY].southeast, p2[tempX][tempY].south);
+                        double StoW = Dist(p2[tempX][tempY].south, p2[tempX][tempY].west);
+                        double WtoNW = Dist(p2[tempX][tempY].west, p2[tempX][tempY].northwest);
+                        double NWtoN = Dist(p2[tempX][tempY].northwest, p2[tempX][tempY].north);
+
+                        double toN = Dist(p2[tempX][tempY], p2[tempX][tempY].north);
+                        double toE = Dist(p2[tempX][tempY], p2[tempX][tempY].east);
+                        double toSE = Dist(p2[tempX][tempY], p2[tempX][tempY].southeast);
+                        double toS = Dist(p2[tempX][tempY], p2[tempX][tempY].south);
+                        double toW = Dist(p2[tempX][tempY], p2[tempX][tempY].west);
+                        double toNW = Dist(p2[tempX][tempY], p2[tempX][tempY].northwest);
+
+                        if(toN + toE == NtoE || toE + toSE == EtoSE || toSE + toS == SEtoS || toS + toW == StoW || toW + toNW == WtoNW || toNW + toN == NWtoN){
+                            edgeflag2 = true;
+                        }
+                        if (!edgeflag2) {
+                            p2[tempX][tempY].setLocation(e.getX() + p2[tempX][tempY].getxPos() - 5, e.getY() + p2[tempX][tempY].getyPos() - 5);
+                            p2[tempX][tempY].relocate();
+                            panel2.drawStuff();
+                        }
                     }
                 });
                 p2[x][y].addMouseListener(new MouseAdapter() {
@@ -120,9 +169,14 @@ public class panelHandler extends JPanel {
                         p1[tempX][tempY].setInactive();
                         panel1.drawStuff();
                         panel2.drawStuff();
+                        edgeflag2 = false;
                     }
                 });
             }
         }
+    }
+
+    private double Dist(controlPoint a, controlPoint b){
+        return Math.sqrt(Math.pow(a.getxPos() - b.getxPos(), 2) + Math.pow(a.getyPos() - b.getyPos(), 2));
     }
 }

@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 
 public class gridPanel extends JPanel {
@@ -8,8 +9,8 @@ public class gridPanel extends JPanel {
     public boolean drawimage = false;
 
     private static int defaultSize = 500;
-    private int sizeX = defaultSize;
-    private int sizeY = defaultSize;
+    public int sizeX = defaultSize;
+    public int sizeY = defaultSize;
     private int rows;
     private int cols;
 
@@ -56,6 +57,10 @@ public class gridPanel extends JPanel {
                 controlPoints[i][j].setEastNeighbor(controlPoints[i+1][j]);
                 controlPoints[i][j].setSouthEastNeighbor(controlPoints[i+1][j+1]);
 
+                controlPoints[i][j].south.setNorthNeighbor(controlPoints[i][j]);
+                controlPoints[i][j].east.setWestNeighbor(controlPoints[i][j]);
+                controlPoints[i][j].southeast.setNorthWestNeighbor(controlPoints[i][j]);
+
                 controlPoints[i][j].setNeighborLocations();
             }
         }
@@ -64,7 +69,6 @@ public class gridPanel extends JPanel {
     //Redraw the pic and then the grid
     protected void paintComponent(Graphics g){
         super.paintComponent(g);
-        //draw the shit
         int x1, x2, y1, y2;
         for (int i = 0; i < rows+1; i++){
             for (int j = 0; j < cols+1; j++){
@@ -72,6 +76,7 @@ public class gridPanel extends JPanel {
                 y1 = controlPoints[i][j].yPos + 5;
                 x2 = controlPoints[i][j].east.getxPos() + 5;
                 y2 = controlPoints[i][j].east.getyPos() + 5;
+
                 g.drawLine(x1, y1, x2, y2);
 
                 x2 = controlPoints[i][j].south.getxPos() + 5;

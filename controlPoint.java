@@ -11,11 +11,14 @@ public class controlPoint extends JButton {
     public controlPoint east;
     public controlPoint south;
     public controlPoint southeast;
+    public controlPoint west;
+    public controlPoint north;
+    public controlPoint northwest;
+
 
     public int eLocx;
     public int sLocx;
     public int seLocx;
-
     public int eLocy;
     public int sLocy;
     public int seLocy;
@@ -71,6 +74,18 @@ public class controlPoint extends JButton {
 
     public void setSouthEastNeighbor(controlPoint sen){
         southeast = sen;
+    }
+
+    public void setNorthNeighbor(controlPoint nn){
+        north = nn;
+    }
+
+    public void setWestNeighbor(controlPoint wn){
+        west = wn;
+    }
+
+    public void setNorthWestNeighbor(controlPoint nwn){
+        northwest = nwn;
     }
 
     public void setActive(){
