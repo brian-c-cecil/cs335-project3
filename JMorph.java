@@ -38,10 +38,10 @@ public class JMorph {
         frame.pack();
         frame.setVisible(true);
         frame.addWindowListener (new WindowAdapter() {
-                public void windowClosing (WindowEvent e) {
-                    System.exit(0);
-                }
-            }
+                                     public void windowClosing (WindowEvent e) {
+                                         System.exit(0);
+                                     }
+                                 }
         );
     }
 
@@ -194,7 +194,7 @@ public class JMorph {
         previewButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                //call function to morph the two images
+                previewAnimation();
             }
         });
         //controlPanel.add(morphButton);
@@ -203,5 +203,14 @@ public class JMorph {
     private void buildGrids(){
         handler = new panelHandler(gridResolution, gridResolution);
         mainPanel.add(handler);
+    }
+
+    private void previewAnimation(){
+        JFrame previewFrame = new JFrame("JMorph [PREVIEW]");
+
+        handler.animateGrid(previewFrame);
+
+        previewFrame.pack();
+        previewFrame.setVisible(true);
     }
 }

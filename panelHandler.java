@@ -1,7 +1,5 @@
 import javax.swing.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
 public class panelHandler extends JPanel {
@@ -16,6 +14,8 @@ public class panelHandler extends JPanel {
 
     private boolean edgeflag1;
     private boolean edgeflag2;
+
+    Timer timer;
 
     //Constructor
     public panelHandler(int x, int y){
@@ -217,5 +217,46 @@ public class panelHandler extends JPanel {
     }
     public void setPostPic(BufferedImage pic){
         panel2.setPic(pic);
+    }
+
+    public void animateGrid(JFrame targetFrame){
+        gridPanel previewPanel = panel1;
+        previewPanel.drawStuff();
+        //previewPanel.disableAllPoints();
+
+        int gridRows = previewPanel.getRows();
+        int gridCols = previewPanel.getCols();
+        controlPoint previewControlPoints[][] = previewPanel.getPoints();
+        controlPoint beginControlPoints[][] = panel1.getPoints();
+        controlPoint endControlPoints[][] = panel2.getPoints();
+
+        targetFrame.add(previewPanel);
+
+        timer = new Timer(50, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                for(int currentRow = 0; currentRow < gridRows; currentRow++){
+                    for(int currentCol = 0; currentCol < gridCols; currentCol++){
+                        int currentPointXPos = previewControlPoints[currentRow][currentCol].getxPos();
+                        int currentPointYPos = previewControlPoints[currentRow][currentCol].getyPos();
+                        int beginPointXPos = beginControlPoints[currentRow][currentCol].getxPos();
+                        int beginPointYPos = beginControlPoints[currentRow][currentCol].getyPos();
+                        int endPointXPos = endControlPoints[currentRow][currentCol].getxPos();
+                        int endPointYPos = endControlPoints[currentRow][currentCol].getyPos();
+
+                        int distanceSegmentX = (endPointXPos - beginPointXPos)/20;
+                        int distanceSegmentY = (endPointYPos - beginPointYPos)/20;
+
+                        previewControlPoints[currentRow][currentCol].setLocation(currentPointXPos+distanceSegmentX,currentPointYPos+distanceSegmentY);
+                        //previewControlPoints[currentRow][currentCol].relocate();
+                    }
+
+                    previewPanel.setControlPoints(previewControlPoints);
+                    previewPanel.drawStuff();
+                }
+            }
+        });
+
+        timer.start();
     }
 }

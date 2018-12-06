@@ -111,4 +111,24 @@ public class gridPanel extends JPanel {
     public controlPoint[][] getPoints(){
         return controlPoints;
     }
+
+    public void setControlPoints(controlPoint[][] targetControlPoints){
+        controlPoints = targetControlPoints;
+    }
+
+    public void disableAllPoints(){
+        for(int currentRow = 0; currentRow < rows; currentRow++){
+            for(int currentCol = 0; currentCol < cols; currentCol++){
+                controlPoints[currentRow][currentCol].setEnabled(false);
+            }
+        }
+    }
+
+    public int getRows(){
+        return rows;
+    }
+
+    public int getCols(){
+        return cols;
+    }
 }
