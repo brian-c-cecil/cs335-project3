@@ -1,15 +1,25 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class JMorph {
     JFrame frame;
     JPanel mainPanel;
+    panelHandler handler;
     int animationDuration = 1;
     int gridResolution = 10;
+    JFileChooser picker; //Maybe add in something to get working directory
+
+    private BufferedImage prePic;
+    private BufferedImage postPic;
 
     public static void main(String args[]){
         new JMorph();
@@ -44,16 +54,51 @@ public class JMorph {
         JMenu settingsMenu = new JMenu("Settings");
         menuBar.add(settingsMenu);
 
-        JMenuItem openFileMenuItem = new JMenuItem("Open");
-        openFileMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
+        //Stuff with the file chooser
+        picker = new JFileChooser();
+        picker.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        picker.addChoosableFileFilter(new FileNameExtensionFilter("Image Files", "jpg", "png", "tif"));
+        picker.setAcceptAllFileFilterUsed(false);
 
+        /*|||||||||||||||||||||||||||||||||||||
+            NEEDS WORK
+        |||||||||||||||||||||||||||||||||||||*/
+        JMenuItem openFileMenuItemPre = new JMenuItem("Open Pre Picture");
+        openFileMenuItemPre.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int validFile = picker.showOpenDialog(frame);
+                if (validFile == JFileChooser.APPROVE_OPTION){
+                    try{
+                        prePic = ImageIO.read(picker.getSelectedFile());
+                    } catch(IOException exc){
+                        System.out.println("Problem reading file");
+                    };
+                    handler.setPrePic(prePic);
+                }
             }
         });
-        //fileMenu.add(openFileMenuItem);
+        fileMenu.add(openFileMenuItemPre);
 
-        //fileMenu.addSeparator();
+        JMenuItem openFileMenuItemPost = new JMenuItem("Open Post Picture");
+        openFileMenuItemPost.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int validFile = picker.showOpenDialog(frame);
+                if (validFile == JFileChooser.APPROVE_OPTION){
+                    try{
+                        postPic = ImageIO.read(picker.getSelectedFile());
+                    } catch(IOException exc){
+                        System.out.println("Problem reading file");
+                    };
+                    handler.setPostPic(postPic);
+                }
+            }
+        });
+        fileMenu.add(openFileMenuItemPost);
+        fileMenu.addSeparator();
+
+
         JMenuItem exitMenuItem = new JMenuItem("Exit");
         exitMenuItem.addActionListener(new ActionListener() {
             @Override
@@ -112,6 +157,7 @@ public class JMorph {
                         }
                         else{
                             gridResolution = convertedInput;
+                            handler.changeResolution(gridResolution, gridResolution);
                         }
                     }
 
@@ -155,7 +201,7 @@ public class JMorph {
     }
 
     private void buildGrids(){
-        panelHandler handler = new panelHandler(gridResolution, gridResolution);
+        handler = new panelHandler(gridResolution, gridResolution);
         mainPanel.add(handler);
     }
 }

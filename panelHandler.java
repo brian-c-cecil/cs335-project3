@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.image.BufferedImage;
 
 public class panelHandler extends JPanel {
     public gridPanel panel1;
@@ -16,6 +17,7 @@ public class panelHandler extends JPanel {
     private boolean edgeflag1;
     private boolean edgeflag2;
 
+    //Constructor
     public panelHandler(int x, int y){
 
         xSize = x;
@@ -32,15 +34,25 @@ public class panelHandler extends JPanel {
         setListeners();
     }
 
+    /*
+    -Creates 2 new gridPanel objects
+    -Is its own function so I didn't have to copy the same code twice
+     in the constructor and in changeResolution
+    */
     public void makeGrids(){
         panel1 = new gridPanel(xSize, ySize);
         panel2 = new gridPanel(xSize, ySize);
     }
 
+    /*
+    -The listeners are put on out here to make it easier for the 2 gridPanels
+     to communicate with each other
+    */
     private void setListeners(){
         controlPoint[][] p1 = panel1.getPoints();
         controlPoint[][] p2 = panel2.getPoints();
 
+        //Sets the mouse drag listeners to redraw the lines and the point
         for (int i = 1; i < xSize+1; i++){
             for (int j = 1; j < ySize+1; j++){
                 x = i;
@@ -176,7 +188,34 @@ public class panelHandler extends JPanel {
         }
     }
 
+    //Finds the distance between 2 points
     private double Dist(controlPoint a, controlPoint b){
         return Math.sqrt(Math.pow(a.getxPos() - b.getxPos(), 2) + Math.pow(a.getyPos() - b.getyPos(), 2));
+    }
+
+    //Called when the user changes the resolution of the grid
+    public void changeResolution(int x, int y){
+        panel1.setVisible(false);
+        panel2.setVisible(false);
+        remove(panel1);
+        remove(panel2);
+
+        xSize = x;
+        ySize = y;
+
+        makeGrids();
+
+        add(panel1);
+        add(panel2);
+
+        setListeners();
+    }
+
+    //These 2 send the pictures down one more layer
+    public void setPrePic(BufferedImage pic){
+        panel1.setPic(pic);
+    }
+    public void setPostPic(BufferedImage pic){
+        panel2.setPic(pic);
     }
 }

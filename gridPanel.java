@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 
 public class gridPanel extends JPanel {
@@ -19,7 +18,7 @@ public class gridPanel extends JPanel {
 
     private controlPoint[][] controlPoints;
 
-    //Default Constructor
+    //Constructor
     public gridPanel(int x, int y){
         rows = x;
         cols = y;
@@ -50,6 +49,7 @@ public class gridPanel extends JPanel {
         setBorder(BorderFactory.createBevelBorder(1));
     }
 
+    //Sets the neighbors of each control point
     public void setNeighbors(){
         for(int i = 0; i < rows+1; i++){
             for (int j = 0; j < cols+1; j++){
@@ -66,9 +66,16 @@ public class gridPanel extends JPanel {
         }
     }
 
-    //Redraw the pic and then the grid
+    //Overloaded paint function
     protected void paintComponent(Graphics g){
         super.paintComponent(g);
+
+        //Draw the picture
+        if(drawimage) {
+            g.drawImage(pic, 0, 0, this);
+        }
+
+        //Draw the lines over the picture
         int x1, x2, y1, y2;
         for (int i = 0; i < rows+1; i++){
             for (int j = 0; j < cols+1; j++){
@@ -90,36 +97,18 @@ public class gridPanel extends JPanel {
         }
     }
 
-    public controlPoint[][] getPoints(){
-        return controlPoints;
-    }
-
+    //Calls repaint, just as a wrapper, Probably not necessary.
     public void drawStuff(){
         repaint();
     }
+
+    public void setPic(BufferedImage inputPic){
+        pic = inputPic;
+        drawimage = true;
+        repaint();
+    }
+
+    public controlPoint[][] getPoints(){
+        return controlPoints;
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
