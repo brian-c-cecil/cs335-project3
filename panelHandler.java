@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class panelHandler extends JPanel {
     public gridPanel panel1;
@@ -16,6 +18,11 @@ public class panelHandler extends JPanel {
     private boolean edgeflag2;
 
     Timer timer;
+
+    int ticker = 0;
+
+    int animationDuration = 5;
+    int frames = 20;
 
     //Constructor
     public panelHandler(int x, int y){
@@ -34,6 +41,8 @@ public class panelHandler extends JPanel {
         setListeners();
     }
 
+
+
     /*
     -Creates 2 new gridPanel objects
     -Is its own function so I didn't have to copy the same code twice
@@ -43,6 +52,8 @@ public class panelHandler extends JPanel {
         panel1 = new gridPanel(xSize, ySize);
         panel2 = new gridPanel(xSize, ySize);
     }
+
+
 
     /*
     -The listeners are put on out here to make it easier for the 2 gridPanels
@@ -86,7 +97,7 @@ public class panelHandler extends JPanel {
                         }
 
                         if (!edgeflag1) {
-                            p1[tempX][tempY].setLocation(e.getX() + p1[tempX][tempY].getxPos() - 5, e.getY() + p1[tempX][tempY].getyPos() - 5);
+                            p1[tempX][tempY].setLocation(e.getX() + p1[tempX][tempY].getTrueXPos() - 5, e.getY() + p1[tempX][tempY].getTrueYPos() - 5);
                             p1[tempX][tempY].relocate();
                             panel1.drawStuff();
                         }
@@ -151,7 +162,7 @@ public class panelHandler extends JPanel {
                             edgeflag2 = true;
                         }
                         if (!edgeflag2) {
-                            p2[tempX][tempY].setLocation(e.getX() + p2[tempX][tempY].getxPos() - 5, e.getY() + p2[tempX][tempY].getyPos() - 5);
+                            p2[tempX][tempY].setLocation(e.getX() + p2[tempX][tempY].getTrueXPos() - 5, e.getY() + p2[tempX][tempY].getTrueYPos() - 5);
                             p2[tempX][tempY].relocate();
                             panel2.drawStuff();
                         }
@@ -188,10 +199,14 @@ public class panelHandler extends JPanel {
         }
     }
 
+
+
     //Finds the distance between 2 points
     private double Dist(controlPoint a, controlPoint b){
-        return Math.sqrt(Math.pow(a.getxPos() - b.getxPos(), 2) + Math.pow(a.getyPos() - b.getyPos(), 2));
+        return Math.sqrt(Math.pow(a.getTrueXPos() - b.getTrueXPos(), 2) + Math.pow(a.getTrueYPos() - b.getTrueYPos(), 2));
     }
+
+
 
     //Called when the user changes the resolution of the grid
     public void changeResolution(int x, int y){
@@ -211,6 +226,8 @@ public class panelHandler extends JPanel {
         setListeners();
     }
 
+
+
     //These 2 send the pictures down one more layer
     public void setPrePic(BufferedImage pic){
         panel1.setPic(pic);
@@ -219,44 +236,58 @@ public class panelHandler extends JPanel {
         panel2.setPic(pic);
     }
 
+
+
     public void animateGrid(JFrame targetFrame){
-        gridPanel previewPanel = panel1;
+        gridPanel previewPanel = new gridPanel(xSize, ySize);
         previewPanel.drawStuff();
-        //previewPanel.disableAllPoints();
+
+        ticker = 0;
 
         int gridRows = previewPanel.getRows();
         int gridCols = previewPanel.getCols();
+
+        previewPanel.setControlPoints(panel1.getPoints());
+
         controlPoint previewControlPoints[][] = previewPanel.getPoints();
         controlPoint beginControlPoints[][] = panel1.getPoints();
         controlPoint endControlPoints[][] = panel2.getPoints();
 
         targetFrame.add(previewPanel);
 
-        timer = new Timer(50, new ActionListener() {
+        timer = new Timer();
+        timer.schedule(new TimerTask(){
             @Override
-            public void actionPerformed(ActionEvent actionEvent) {
+            public void run(){
                 for(int currentRow = 0; currentRow < gridRows; currentRow++){
                     for(int currentCol = 0; currentCol < gridCols; currentCol++){
-                        int currentPointXPos = previewControlPoints[currentRow][currentCol].getxPos();
-                        int currentPointYPos = previewControlPoints[currentRow][currentCol].getyPos();
-                        int beginPointXPos = beginControlPoints[currentRow][currentCol].getxPos();
-                        int beginPointYPos = beginControlPoints[currentRow][currentCol].getyPos();
-                        int endPointXPos = endControlPoints[currentRow][currentCol].getxPos();
-                        int endPointYPos = endControlPoints[currentRow][currentCol].getyPos();
+                        double currentPointXPos = previewControlPoints[currentRow][currentCol].getTrueXPos();
+                        double currentPointYPos = previewControlPoints[currentRow][currentCol].getTrueYPos();
+                        double beginPointXPos = beginControlPoints[currentRow][currentCol].getTrueXPos();
+                        double beginPointYPos = beginControlPoints[currentRow][currentCol].getTrueYPos();
+                        double endPointXPos = endControlPoints[currentRow][currentCol].getTrueXPos();
+                        double endPointYPos = endControlPoints[currentRow][currentCol].getTrueYPos();
 
-                        int distanceSegmentX = (endPointXPos - beginPointXPos)/20;
-                        int distanceSegmentY = (endPointYPos - beginPointYPos)/20;
+                        double distanceSegmentX = (endPointXPos - beginPointXPos)/frames;
+                        double distanceSegmentY = (endPointYPos - beginPointYPos)/frames;
 
                         previewControlPoints[currentRow][currentCol].setLocation(currentPointXPos+distanceSegmentX,currentPointYPos+distanceSegmentY);
-                        //previewControlPoints[currentRow][currentCol].relocate();
                     }
-
                     previewPanel.setControlPoints(previewControlPoints);
                     previewPanel.drawStuff();
                 }
-            }
-        });
+                ticker++;
+                if (ticker == frames){
+                    timer.cancel();
+                }
 
-        timer.start();
+            }
+        }, 0, (animationDuration * 1000)/frames);
+    }
+
+
+
+    public void setDuration(int seconds){
+        animationDuration = seconds;
     }
 }

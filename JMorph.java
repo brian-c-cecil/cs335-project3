@@ -14,7 +14,7 @@ public class JMorph {
     JFrame frame;
     JPanel mainPanel;
     panelHandler handler;
-    int animationDuration = 1;
+    int animationDuration = 5;
     int gridResolution = 10;
     JFileChooser picker; //Maybe add in something to get working directory
 
@@ -125,6 +125,7 @@ public class JMorph {
                         }
                         else{
                             animationDuration = convertedInput;
+                            handler.setDuration(animationDuration);
                         }
                     }
 

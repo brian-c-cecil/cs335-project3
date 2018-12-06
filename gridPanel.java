@@ -76,23 +76,23 @@ public class gridPanel extends JPanel {
         }
 
         //Draw the lines over the picture
-        int x1, x2, y1, y2;
+        double x1, x2, y1, y2;
         for (int i = 0; i < rows+1; i++){
             for (int j = 0; j < cols+1; j++){
-                x1 = controlPoints[i][j].xPos + 5;
-                y1 = controlPoints[i][j].yPos + 5;
-                x2 = controlPoints[i][j].east.getxPos() + 5;
-                y2 = controlPoints[i][j].east.getyPos() + 5;
+                x1 = controlPoints[i][j].trueXPos + 5;
+                y1 = controlPoints[i][j].trueYPos + 5;
+                x2 = controlPoints[i][j].east.getTrueXPos() + 5;
+                y2 = controlPoints[i][j].east.getTrueYPos() + 5;
 
-                g.drawLine(x1, y1, x2, y2);
+                g.drawLine((int)x1, (int)y1, (int)x2, (int)y2);
 
-                x2 = controlPoints[i][j].south.getxPos() + 5;
-                y2 = controlPoints[i][j].south.getyPos() + 5;
-                g.drawLine(x1, y1, x2, y2);
+                x2 = controlPoints[i][j].south.getTrueXPos() + 5;
+                y2 = controlPoints[i][j].south.getTrueYPos() + 5;
+                g.drawLine((int)x1, (int)y1, (int)x2, (int)y2);
 
-                x2 = controlPoints[i][j].southeast.getxPos() + 5;
-                y2 = controlPoints[i][j].southeast.getyPos() + 5;
-                g.drawLine(x1, y1, x2, y2);
+                x2 = controlPoints[i][j].southeast.getTrueXPos() + 5;
+                y2 = controlPoints[i][j].southeast.getTrueYPos() + 5;
+                g.drawLine((int)x1, (int)y1, (int)x2, (int)y2);
             }
         }
     }
@@ -113,13 +113,9 @@ public class gridPanel extends JPanel {
     }
 
     public void setControlPoints(controlPoint[][] targetControlPoints){
-        controlPoints = targetControlPoints;
-    }
-
-    public void disableAllPoints(){
-        for(int currentRow = 0; currentRow < rows; currentRow++){
-            for(int currentCol = 0; currentCol < cols; currentCol++){
-                controlPoints[currentRow][currentCol].setEnabled(false);
+        for(int i = 0; i < rows; i++){
+            for (int j = 0; j < cols; j++){
+                controlPoints[i][j].setLocation(targetControlPoints[i][j].getX(), targetControlPoints[i][j].getY());
             }
         }
     }

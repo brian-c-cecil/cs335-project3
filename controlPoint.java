@@ -4,6 +4,8 @@ import java.awt.*;
 public class controlPoint extends JButton {
 
     //This point's data
+    public double trueXPos;
+    public double trueYPos;
     public int xPos;
     public int yPos;
     private int rowID;
@@ -18,20 +20,23 @@ public class controlPoint extends JButton {
     public controlPoint northwest;
 
     //Locations of Neighbors
-    public int eLocx;
-    public int sLocx;
-    public int seLocx;
-    public int eLocy;
-    public int sLocy;
-    public int seLocy;
+    public double eLocx;
+    public double sLocx;
+    public double seLocx;
+    public double eLocy;
+    public double sLocy;
+    public double seLocy;
 
     //Used to color the button and check for collisions with lines
     private boolean isActive = false;
 
     //Constructor
-    public controlPoint(int x, int y){
-        xPos = x;
-        yPos = y;
+    public controlPoint(double x, double y){
+        trueXPos = x;
+        trueYPos = y;
+
+        xPos = (int)x;
+        yPos = (int)y;
 
         setBounds(xPos, yPos, 10, 10);
 
@@ -46,6 +51,14 @@ public class controlPoint extends JButton {
 
     public int getColID(){
         return colID;
+    }
+
+    public double getTrueXPos(){
+        return trueXPos;
+    }
+
+    public double getTrueYPos(){
+        return trueYPos;
     }
 
     public int getxPos() {
@@ -100,9 +113,11 @@ public class controlPoint extends JButton {
         setBackground(Color.black);
     }
 
-    public void setLocation(int x, int y){
-        xPos = x;
-        yPos = y;
+    public void setLocation(double x, double y){
+        trueXPos = x;
+        trueYPos = y;
+        xPos = (int) x;
+        yPos = (int) y;
     }
 
     public void relocate(){
@@ -110,13 +125,13 @@ public class controlPoint extends JButton {
     }
 
     public void setNeighborLocations(){
-        eLocx = east.getxPos();
-        eLocy = east.getyPos();
+        eLocx = east.getTrueXPos();
+        eLocy = east.getTrueYPos();
 
-        sLocx = south.getxPos();
-        sLocy = south.getyPos();
+        sLocx = south.getTrueXPos();
+        sLocy = south.getTrueYPos();
 
-        seLocx = southeast.getxPos();
-        seLocy = southeast.getyPos();
+        seLocx = southeast.getTrueXPos();
+        seLocy = southeast.getTrueYPos();
     }
 }
