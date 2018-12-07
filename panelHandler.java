@@ -412,12 +412,12 @@ public class panelHandler extends JPanel {
     }
 
     public void boostPreImage(){
-        RescaleOp op = new RescaleOp(1.2f, 15, null);
+        RescaleOp op = new RescaleOp(1.2f, 20, null);
         op.filter(prePic, prePic);
     }
 
     public void boostPostImage(){
-        RescaleOp op = new RescaleOp(1.2f, 15, null);
+        RescaleOp op = new RescaleOp(1.2f, 20, null);
         op.filter(postPic, postPic);
     }
 }

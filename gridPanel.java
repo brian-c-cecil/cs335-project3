@@ -115,7 +115,8 @@ public class gridPanel extends JPanel {
     public void setControlPoints(controlPoint[][] targetControlPoints){
         for(int i = 0; i < rows; i++){
             for (int j = 0; j < cols; j++){
-                controlPoints[i][j].setLocation(targetControlPoints[i][j].getX(), targetControlPoints[i][j].getY());
+                controlPoints[i][j].setLocation(targetControlPoints[i][j].getTrueXPos(), targetControlPoints[i][j].getTrueYPos());
+                controlPoints[i][j].relocate();
             }
         }
     }
