@@ -60,9 +60,6 @@ public class JMorph {
         picker.addChoosableFileFilter(new FileNameExtensionFilter("Image Files", "jpg", "png", "tif"));
         picker.setAcceptAllFileFilterUsed(false);
 
-        /*|||||||||||||||||||||||||||||||||||||
-            NEEDS WORK
-        |||||||||||||||||||||||||||||||||||||*/
         JMenuItem openFileMenuItemPre = new JMenuItem("Open Pre Picture");
         openFileMenuItemPre.addActionListener(new ActionListener() {
             @Override

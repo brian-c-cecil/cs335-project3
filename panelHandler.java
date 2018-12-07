@@ -24,6 +24,10 @@ public class panelHandler extends JPanel {
     int animationDuration = 5;
     int frames = 20;
 
+    BufferedImage prePic;
+    BufferedImage postPic;
+    BufferedImage[] tweenPics;
+
     //Constructor
     public panelHandler(int x, int y){
 
@@ -230,12 +234,13 @@ public class panelHandler extends JPanel {
 
     //These 2 send the pictures down one more layer
     public void setPrePic(BufferedImage pic){
+        prePic = pic;
         panel1.setPic(pic);
     }
     public void setPostPic(BufferedImage pic){
+        postPic = pic;
         panel2.setPic(pic);
     }
-
 
 
     public void animateGrid(JFrame targetFrame){
@@ -285,9 +290,123 @@ public class panelHandler extends JPanel {
         }, 0, (animationDuration * 1000)/frames);
     }
 
-
-
     public void setDuration(int seconds){
         animationDuration = seconds;
+    }
+
+    private BufferedImage[] generateTweenPics(){
+        tweenPics = new BufferedImage[frames];
+        for (int i = 0; i < frames; i++){
+            tweenPics[i] = new BufferedImage(prePic.getWidth(), prePic.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        }
+
+        int[][][] diffs = new int[prePic.getWidth()][prePic.getHeight()][4];
+
+        //Subtract the first image from the second
+        int argbA;
+        int argbB;
+        for (int i = 0; i < prePic.getWidth(); i++) {
+            for (int j = 0; j < prePic.getHeight(); j++) {
+                argbA = prePic.getRGB(i, j);
+                argbB = postPic.getRGB(i, j);
+
+                int aPre = (argbA >> 24) & 0xFF;
+                int rPre = (argbA >> 16) & 0xFF;
+                int gPre = (argbA >> 8) & 0xFF;
+                int bPre = (argbA) & 0xFF;
+
+                int aPost = (argbB >> 24) & 0xFF;
+                int rPost = (argbB >> 16) & 0xFF;
+                int gPost = (argbB >> 8) & 0xFF;
+                int bPost = (argbB) & 0xFF;
+
+                int aDiff = aPost - aPre;
+                int rDiff = rPost - rPre;
+                int gDiff = gPost - gPre;
+                int bDiff = bPost - bPre;
+
+                int diff =
+                        (aDiff << 24) | (rDiff << 16) | (gDiff << 8) | bDiff;
+
+                diffs[i][j][0] = aDiff/20;
+                diffs[i][j][1] = rDiff/20;
+                diffs[i][j][2] = gDiff/20;
+                diffs[i][j][3] = bDiff/20;
+            }
+        }
+        //add add those to a copy of the original image
+        for(int k = 0; k < frames; k++){
+            for (int i = 0; i < prePic.getWidth(); i++){
+                for (int j = 0; j < prePic.getHeight(); j++){
+                    if (k == 0){
+                        argbA = prePic.getRGB(i, j);
+
+                        int aPre = (argbA >> 24) & 0xFF;
+                        int rPre = (argbA >> 16) & 0xFF;
+                        int gPre = (argbA >> 8) & 0xFF;
+                        int bPre = (argbA) & 0xFF;
+
+                        int aNext = aPre + diffs[i][j][0];
+                        int rNext = rPre + diffs[i][j][1];
+                        int gNext = gPre + diffs[i][j][2];
+                        int bNext = bPre + diffs[i][j][3];
+
+                        int next =
+                                (aNext << 24) | (rNext << 16) | (gNext << 8) | bNext;
+                        tweenPics[k].setRGB(i, j, next);
+                    }
+                    else{
+                        argbA = tweenPics[k-1].getRGB(i, j);
+
+                        int aPre = (argbA >> 24) & 0xFF;
+                        int rPre = (argbA >> 16) & 0xFF;
+                        int gPre = (argbA >> 8) & 0xFF;
+                        int bPre = (argbA) & 0xFF;
+
+                        int aNext = aPre + diffs[i][j][0];
+                        int rNext = rPre + diffs[i][j][1];
+                        int gNext = gPre + diffs[i][j][2];
+                        int bNext = bPre + diffs[i][j][3];
+
+                        int next =
+                                (aNext << 24) | (rNext << 16) | (gNext << 8) | bNext;
+                        tweenPics[k].setRGB(i, j, next);
+                    }
+                }
+            }
+        }
+        return tweenPics;
+    }
+
+    private BufferedImage subtract(BufferedImage a, BufferedImage b){
+        BufferedImage output = new BufferedImage(a.getWidth(), a.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        int argbA;
+        int argbB;
+        for (int i = 0; i < a.getWidth(); i++){
+            for (int j = 0; j < a.getHeight(); j++){
+                argbA = a.getRGB(i, j);
+                argbB = b.getRGB(i, j);
+
+                int aA = (argbA >> 24) & 0xFF;
+                int rA = (argbA >> 16) & 0xFF;
+                int gA = (argbA >>  8) & 0xFF;
+                int bA = (argbA      ) & 0xFF;
+
+                int aB = (argbB >> 24) & 0xFF;
+                int rB = (argbB >> 16) & 0xFF;
+                int gB = (argbB >>  8) & 0xFF;
+                int bB = (argbB      ) & 0xFF;
+
+                int aDiff = aB - aA;
+                int rDiff = rB - rA;
+                int gDiff = gB - gA;
+                int bDiff = bB - bA;
+
+                int diff =
+                        (aDiff << 24) | (rDiff << 16) | (gDiff << 8) | bDiff;
+                output.setRGB(i, j, diff);
+            }
+        }
+        return output;
     }
 }
