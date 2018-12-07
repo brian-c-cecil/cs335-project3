@@ -95,6 +95,24 @@ public class JMorph {
         fileMenu.add(openFileMenuItemPost);
         fileMenu.addSeparator();
 
+        JMenuItem boostImage1 = new JMenuItem("Brighten Image 1");
+        boostImage1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handler.boostPreImage();
+            }
+        });
+        fileMenu.add(boostImage1);
+        JMenuItem boostImage2 = new JMenuItem("Brighten Image 2");
+        boostImage2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handler.boostPostImage();
+            }
+        });
+        fileMenu.add(boostImage2);
+        fileMenu.addSeparator();
+
 
         JMenuItem exitMenuItem = new JMenuItem("Exit");
         exitMenuItem.addActionListener(new ActionListener() {

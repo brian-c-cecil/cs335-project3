@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.RescaleOp;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -408,5 +409,15 @@ public class panelHandler extends JPanel {
             }
         }
         return output;
+    }
+
+    public void boostPreImage(){
+        RescaleOp op = new RescaleOp(1.2f, 15, null);
+        op.filter(prePic, prePic);
+    }
+
+    public void boostPostImage(){
+        RescaleOp op = new RescaleOp(1.2f, 15, null);
+        op.filter(postPic, postPic);
     }
 }
