@@ -20,6 +20,10 @@ public class panelHandler extends JPanel {
 
     Timer timer;
 
+    MorphTools morphTools = new MorphTools();
+
+    Triangle[][][] triangles;
+
     int ticker = 0;
 
     int animationDuration = 5;
@@ -212,7 +216,6 @@ public class panelHandler extends JPanel {
     }
 
 
-
     //Called when the user changes the resolution of the grid
     public void changeResolution(int x, int y){
         panel1.setVisible(false);
@@ -244,7 +247,7 @@ public class panelHandler extends JPanel {
     }
 
 
-    public void animateGrid(JFrame targetFrame){
+    public void animateGrid(JFrame targetFrame, boolean isPreview){
         gridPanel previewPanel = new gridPanel(xSize, ySize);
         previewPanel.drawStuff();
 
@@ -253,42 +256,123 @@ public class panelHandler extends JPanel {
         int gridRows = previewPanel.getRows();
         int gridCols = previewPanel.getCols();
 
+        //triangle array needed to use functions in morphtools
+        triangles = new Triangle[gridRows][gridCols][2];
+
         previewPanel.setControlPoints(panel1.getPoints());
 
         controlPoint previewControlPoints[][] = previewPanel.getPoints();
         controlPoint beginControlPoints[][] = panel1.getPoints();
         controlPoint endControlPoints[][] = panel2.getPoints();
 
+        //filling the three dimensional array of triangles
+        //take the four points in each cell
+        //construct both triangles in each cells using their three vertices
+        for(int currentRow = 0; currentRow < gridRows; currentRow++){
+            for(int currentCol = 0; currentCol < gridCols; currentCol++){
+                double topLeftX = previewControlPoints[currentRow][currentCol].getTrueXPos();
+                double topLeftY = previewControlPoints[currentRow][currentCol].getTrueYPos();
+                double topRightX = previewControlPoints[currentRow][currentCol+1].getTrueXPos();
+                double topRightY = previewControlPoints[currentRow][currentCol+1].getTrueYPos();
+                double bottomLeftX = previewControlPoints[currentRow+1][currentCol].getTrueXPos();
+                double bottomLeftY = previewControlPoints[currentRow+1][currentCol].getTrueYPos();
+                double bottomRightX = previewControlPoints[currentRow+1][currentCol+1].getTrueXPos();
+                double bottomRightY = previewControlPoints[currentRow+1][currentCol+1].getTrueYPos();
+
+                double[] leftTriangle = new double[]{topLeftX, topLeftY, bottomLeftX, bottomLeftY, bottomRightX, bottomRightY};
+                double[] rightTriangle = new double[]{topLeftX, topLeftY, topRightX, topRightY, bottomRightX, bottomRightY};
+
+                triangles[currentRow][currentCol][0] = new Triangle(leftTriangle);
+                triangles[currentRow][currentCol][1] = new Triangle(rightTriangle);
+            }
+        }
+
         targetFrame.add(previewPanel);
 
-        timer = new Timer();
-        timer.schedule(new TimerTask(){
-            @Override
-            public void run(){
-                for(int currentRow = 0; currentRow < gridRows; currentRow++){
-                    for(int currentCol = 0; currentCol < gridCols; currentCol++){
-                        double currentPointXPos = previewControlPoints[currentRow][currentCol].getTrueXPos();
-                        double currentPointYPos = previewControlPoints[currentRow][currentCol].getTrueYPos();
-                        double beginPointXPos = beginControlPoints[currentRow][currentCol].getTrueXPos();
-                        double beginPointYPos = beginControlPoints[currentRow][currentCol].getTrueYPos();
-                        double endPointXPos = endControlPoints[currentRow][currentCol].getTrueXPos();
-                        double endPointYPos = endControlPoints[currentRow][currentCol].getTrueYPos();
+        //code for the PREVIEW
+        if(isPreview){
+            timer = new Timer();
+            timer.schedule(new TimerTask(){
+                @Override
+                public void run(){
+                    for(int currentRow = 0; currentRow < gridRows; currentRow++){
+                        for(int currentCol = 0; currentCol < gridCols; currentCol++){
+                            double currentPointXPos = previewControlPoints[currentRow][currentCol].getTrueXPos();
+                            double currentPointYPos = previewControlPoints[currentRow][currentCol].getTrueYPos();
+                            double beginPointXPos = beginControlPoints[currentRow][currentCol].getTrueXPos();
+                            double beginPointYPos = beginControlPoints[currentRow][currentCol].getTrueYPos();
+                            double endPointXPos = endControlPoints[currentRow][currentCol].getTrueXPos();
+                            double endPointYPos = endControlPoints[currentRow][currentCol].getTrueYPos();
 
-                        double distanceSegmentX = (endPointXPos - beginPointXPos)/frames;
-                        double distanceSegmentY = (endPointYPos - beginPointYPos)/frames;
+                            double distanceSegmentX = (endPointXPos - beginPointXPos)/frames;
+                            double distanceSegmentY = (endPointYPos - beginPointYPos)/frames;
 
-                        previewControlPoints[currentRow][currentCol].setLocation(currentPointXPos+distanceSegmentX,currentPointYPos+distanceSegmentY);
+                            previewControlPoints[currentRow][currentCol].setLocation(currentPointXPos+distanceSegmentX,currentPointYPos+distanceSegmentY);
+                        }
+                        previewPanel.setControlPoints(previewControlPoints);
+                        previewPanel.drawStuff();
                     }
-                    previewPanel.setControlPoints(previewControlPoints);
-                    previewPanel.drawStuff();
-                }
-                ticker++;
-                if (ticker == frames){
-                    timer.cancel();
-                }
+                    ticker++;
+                    if (ticker == frames){
+                        timer.cancel();
+                    }
 
-            }
-        }, 0, (animationDuration * 1000)/frames);
+                }
+            }, 0, (animationDuration * 1000)/frames);
+        }
+
+        //code for the MORPH
+        else if(!isPreview){
+            //get the buffered images
+            BufferedImage[] imageFrames = generateTweenPics();
+
+            timer = new Timer();
+            timer.schedule(new TimerTask(){
+                @Override
+                public void run(){
+                    //this part is unchanged from the preview
+                    for(int currentRow = 0; currentRow < gridRows; currentRow++){
+                        for(int currentCol = 0; currentCol < gridCols; currentCol++){
+                            double currentPointXPos = previewControlPoints[currentRow][currentCol].getTrueXPos();
+                            double currentPointYPos = previewControlPoints[currentRow][currentCol].getTrueYPos();
+                            double beginPointXPos = beginControlPoints[currentRow][currentCol].getTrueXPos();
+                            double beginPointYPos = beginControlPoints[currentRow][currentCol].getTrueYPos();
+                            double endPointXPos = endControlPoints[currentRow][currentCol].getTrueXPos();
+                            double endPointYPos = endControlPoints[currentRow][currentCol].getTrueYPos();
+
+                            double distanceSegmentX = (endPointXPos - beginPointXPos)/frames;
+                            double distanceSegmentY = (endPointYPos - beginPointYPos)/frames;
+
+                            previewControlPoints[currentRow][currentCol].setLocation(currentPointXPos+distanceSegmentX,currentPointYPos+distanceSegmentY);
+                        }
+                        previewPanel.setControlPoints(previewControlPoints);
+                        previewPanel.drawStuff();
+                    }
+
+                    //step through each cell
+                    //THE PROBLEM IS PROBABLY HERE
+                    for(int currentRow = 0; currentRow < gridRows; currentRow++){
+                        for(int currentCol = 0; currentCol < gridCols; currentCol++){
+                            //check to make sure there are still image frames
+                            if(ticker != imageFrames.length){
+                                //warp image in left triangle from current frame to next frame
+                                morphTools.warpTriangle(imageFrames[ticker], imageFrames[ticker+1], triangles[currentRow][currentCol][0], triangles[currentRow][currentCol][0], null, null);
+
+                                //warp image in right triangle from current frame to next frame
+                                morphTools.warpTriangle(imageFrames[ticker], imageFrames[ticker+1], triangles[currentRow][currentCol][1], triangles[currentRow][currentCol][1], null, null);
+                            }
+                        }
+                    }
+
+                    ticker++;
+                    if (ticker == frames){
+                        timer.cancel();
+                    }
+                    previewPanel.drawStuff();
+
+                }
+            }, 0, (animationDuration * 1000)/frames);
+        }
     }
 
     public void setDuration(int seconds){
@@ -326,8 +410,7 @@ public class panelHandler extends JPanel {
                 int gDiff = gPost - gPre;
                 int bDiff = bPost - bPre;
 
-                int diff =
-                        (aDiff << 24) | (rDiff << 16) | (gDiff << 8) | bDiff;
+                int diff = (aDiff << 24) | (rDiff << 16) | (gDiff << 8) | bDiff;
 
                 diffs[i][j][0] = aDiff/20;
                 diffs[i][j][1] = rDiff/20;
@@ -352,8 +435,7 @@ public class panelHandler extends JPanel {
                         int gNext = gPre + diffs[i][j][2];
                         int bNext = bPre + diffs[i][j][3];
 
-                        int next =
-                                (aNext << 24) | (rNext << 16) | (gNext << 8) | bNext;
+                        int next = (aNext << 24) | (rNext << 16) | (gNext << 8) | bNext;
                         tweenPics[k].setRGB(i, j, next);
                     }
                     else{
@@ -369,8 +451,7 @@ public class panelHandler extends JPanel {
                         int gNext = gPre + diffs[i][j][2];
                         int bNext = bPre + diffs[i][j][3];
 
-                        int next =
-                                (aNext << 24) | (rNext << 16) | (gNext << 8) | bNext;
+                        int next = (aNext << 24) | (rNext << 16) | (gNext << 8) | bNext;
                         tweenPics[k].setRGB(i, j, next);
                     }
                 }

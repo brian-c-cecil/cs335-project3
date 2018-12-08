@@ -201,19 +201,19 @@ public class JMorph {
         previewButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                //call function to preview movement of control points
+                previewAnimation();
             }
         });
         controlPanel.add(previewButton);
 
         JButton morphButton = new JButton("Morph");
-        previewButton.addActionListener(new ActionListener() {
+        morphButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                previewAnimation();
+                morphAnimation();
             }
         });
-        //controlPanel.add(morphButton);
+        controlPanel.add(morphButton);
     }
 
     private void buildGrids(){
@@ -221,10 +221,19 @@ public class JMorph {
         mainPanel.add(handler);
     }
 
+    private void morphAnimation(){
+        JFrame morphFrame = new JFrame("JMorph [MORPH]");
+
+        handler.animateGrid(morphFrame, false);
+
+        morphFrame.pack();
+        morphFrame.setVisible(true);
+    }
+
     private void previewAnimation(){
         JFrame previewFrame = new JFrame("JMorph [PREVIEW]");
 
-        handler.animateGrid(previewFrame);
+        handler.animateGrid(previewFrame, true);
 
         previewFrame.pack();
         previewFrame.setVisible(true);
