@@ -22,7 +22,8 @@ public class panelHandler extends JPanel {
 
     MorphTools morphTools = new MorphTools();
 
-    Triangle[][][] triangles;
+    Triangle[][][] preTriangles;
+    Triangle[][][] postTriangles;
 
     int ticker = 0;
 
@@ -256,36 +257,11 @@ public class panelHandler extends JPanel {
         int gridRows = previewPanel.getRows();
         int gridCols = previewPanel.getCols();
 
-        //triangle array needed to use functions in morphtools
-        triangles = new Triangle[gridRows][gridCols][2];
-
         previewPanel.setControlPoints(panel1.getPoints());
 
         controlPoint previewControlPoints[][] = previewPanel.getPoints();
         controlPoint beginControlPoints[][] = panel1.getPoints();
         controlPoint endControlPoints[][] = panel2.getPoints();
-
-        //filling the three dimensional array of triangles
-        //take the four points in each cell
-        //construct both triangles in each cells using their three vertices
-        for(int currentRow = 0; currentRow < gridRows; currentRow++){
-            for(int currentCol = 0; currentCol < gridCols; currentCol++){
-                double topLeftX = previewControlPoints[currentRow][currentCol].getTrueXPos();
-                double topLeftY = previewControlPoints[currentRow][currentCol].getTrueYPos();
-                double topRightX = previewControlPoints[currentRow][currentCol+1].getTrueXPos();
-                double topRightY = previewControlPoints[currentRow][currentCol+1].getTrueYPos();
-                double bottomLeftX = previewControlPoints[currentRow+1][currentCol].getTrueXPos();
-                double bottomLeftY = previewControlPoints[currentRow+1][currentCol].getTrueYPos();
-                double bottomRightX = previewControlPoints[currentRow+1][currentCol+1].getTrueXPos();
-                double bottomRightY = previewControlPoints[currentRow+1][currentCol+1].getTrueYPos();
-
-                double[] leftTriangle = new double[]{topLeftX, topLeftY, bottomLeftX, bottomLeftY, bottomRightX, bottomRightY};
-                double[] rightTriangle = new double[]{topLeftX, topLeftY, topRightX, topRightY, bottomRightX, bottomRightY};
-
-                triangles[currentRow][currentCol][0] = new Triangle(leftTriangle);
-                triangles[currentRow][currentCol][1] = new Triangle(rightTriangle);
-            }
-        }
 
         targetFrame.add(previewPanel);
 
@@ -326,43 +302,13 @@ public class panelHandler extends JPanel {
             //get the buffered images
             BufferedImage[] imageFrames = generateTweenPics();
 
+            previewPanel.setPic(imageFrames[0]);
+
             timer = new Timer();
             timer.schedule(new TimerTask(){
                 @Override
                 public void run(){
-                    //this part is unchanged from the preview
-                    for(int currentRow = 0; currentRow < gridRows; currentRow++){
-                        for(int currentCol = 0; currentCol < gridCols; currentCol++){
-                            double currentPointXPos = previewControlPoints[currentRow][currentCol].getTrueXPos();
-                            double currentPointYPos = previewControlPoints[currentRow][currentCol].getTrueYPos();
-                            double beginPointXPos = beginControlPoints[currentRow][currentCol].getTrueXPos();
-                            double beginPointYPos = beginControlPoints[currentRow][currentCol].getTrueYPos();
-                            double endPointXPos = endControlPoints[currentRow][currentCol].getTrueXPos();
-                            double endPointYPos = endControlPoints[currentRow][currentCol].getTrueYPos();
-
-                            double distanceSegmentX = (endPointXPos - beginPointXPos)/frames;
-                            double distanceSegmentY = (endPointYPos - beginPointYPos)/frames;
-
-                            previewControlPoints[currentRow][currentCol].setLocation(currentPointXPos+distanceSegmentX,currentPointYPos+distanceSegmentY);
-                        }
-                        previewPanel.setControlPoints(previewControlPoints);
-                        previewPanel.drawStuff();
-                    }
-
-                    //step through each cell
-                    //THE PROBLEM IS PROBABLY HERE
-                    for(int currentRow = 0; currentRow < gridRows; currentRow++){
-                        for(int currentCol = 0; currentCol < gridCols; currentCol++){
-                            //check to make sure there are still image frames
-                            if(ticker != imageFrames.length){
-                                //warp image in left triangle from current frame to next frame
-                                morphTools.warpTriangle(imageFrames[ticker], imageFrames[ticker+1], triangles[currentRow][currentCol][0], triangles[currentRow][currentCol][0], null, null);
-
-                                //warp image in right triangle from current frame to next frame
-                                morphTools.warpTriangle(imageFrames[ticker], imageFrames[ticker+1], triangles[currentRow][currentCol][1], triangles[currentRow][currentCol][1], null, null);
-                            }
-                        }
-                    }
+                    previewPanel.setPic(imageFrames[ticker]);
 
                     ticker++;
                     if (ticker == frames){
@@ -379,7 +325,7 @@ public class panelHandler extends JPanel {
         animationDuration = seconds;
     }
 
-    private BufferedImage[] generateTweenPics(){
+    public BufferedImage[] generateTweenPics(){
         tweenPics = new BufferedImage[frames];
         for (int i = 0; i < frames; i++){
             tweenPics[i] = new BufferedImage(prePic.getWidth(), prePic.getHeight(), BufferedImage.TYPE_INT_ARGB);

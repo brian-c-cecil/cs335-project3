@@ -81,7 +81,7 @@ public class MorphTools
         g2.clip(destPath);
         g2.setTransform(af);
         g2.drawImage(src, 0, 0, null);
-        g2.dispose();
+        //g2.dispose();
     }
 
     private static void Gauss(int n, double[][] a, int[] l)

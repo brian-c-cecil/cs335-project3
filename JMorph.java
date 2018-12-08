@@ -113,6 +113,23 @@ public class JMorph {
         fileMenu.add(boostImage2);
         fileMenu.addSeparator();
 
+        JMenuItem saveMorphMenuItem = new JMenuItem("Save Morph");
+        saveMorphMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                BufferedImage[] imageFrames = handler.generateTweenPics();
+                for(int currentFrame = 0; currentFrame < imageFrames.length; currentFrame++){
+                    try {
+                        File outputFile = new File("frame" + currentFrame + ".png");
+                        ImageIO.write(imageFrames[currentFrame], "png", outputFile);
+                    } catch (IOException error) {
+                    }
+                }
+            }
+        });
+        fileMenu.add(saveMorphMenuItem);
+
+        fileMenu.addSeparator();
 
         JMenuItem exitMenuItem = new JMenuItem("Exit");
         exitMenuItem.addActionListener(new ActionListener() {
