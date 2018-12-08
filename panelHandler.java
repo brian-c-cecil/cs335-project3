@@ -302,6 +302,8 @@ public class panelHandler extends JPanel {
             //get the buffered images
             BufferedImage[] imageFrames = generateTweenPics();
 
+            controlPoint[][] prevPoints = previewPanel.getPoints();
+
             previewPanel.setPic(imageFrames[0]);
 
             timer = new Timer();
@@ -310,9 +312,34 @@ public class panelHandler extends JPanel {
                 public void run(){
                     previewPanel.setPic(imageFrames[ticker]);
 
+                    for(int currentRow = 0; currentRow < gridRows; currentRow++){
+                        for(int currentCol = 0; currentCol < gridCols; currentCol++){
+                            double currentPointXPos = previewControlPoints[currentRow][currentCol].getTrueXPos();
+                            double currentPointYPos = previewControlPoints[currentRow][currentCol].getTrueYPos();
+                            double beginPointXPos = beginControlPoints[currentRow][currentCol].getTrueXPos();
+                            double beginPointYPos = beginControlPoints[currentRow][currentCol].getTrueYPos();
+                            double endPointXPos = endControlPoints[currentRow][currentCol].getTrueXPos();
+                            double endPointYPos = endControlPoints[currentRow][currentCol].getTrueYPos();
+
+                            double distanceSegmentX = (endPointXPos - beginPointXPos)/frames;
+                            double distanceSegmentY = (endPointYPos - beginPointYPos)/frames;
+
+                            previewControlPoints[currentRow][currentCol].setLocation(currentPointXPos+distanceSegmentX,currentPointYPos+distanceSegmentY);
+                        }
+
+                        previewPanel.shearImage(previewControlPoints);
+
+                        previewPanel.setControlPoints(previewControlPoints);
+
+                        previewPanel.drawStuff();
+                    }
+
+
                     ticker++;
                     if (ticker == frames){
                         timer.cancel();
+                        previewPanel.setPic(postPic);
+                        previewPanel.drawStuff();
                     }
                     previewPanel.drawStuff();
 

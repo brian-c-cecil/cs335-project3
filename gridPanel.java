@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 
 public class gridPanel extends JPanel {
@@ -127,5 +129,43 @@ public class gridPanel extends JPanel {
 
     public int getCols(){
         return cols;
+    }
+
+    public void shearImage(controlPoint[][] nextPoints){
+
+        for (int i = 0; i < rows; i++){
+            for (int j = 0; j < cols; j++){
+                double x0 = 0;
+                double y0 = 0;
+                double x1 = 0;
+                double y1 = 0;
+                double x2 = 0;
+                double y2 = 0;
+                if (i != 0 && j!= 0 && i != rows && j != cols) {
+                    x0 = controlPoints[i][j].getTrueXPos();
+                    y0 = controlPoints[i][j].getTrueYPos();
+                    x1 = controlPoints[i - 1][j].getTrueXPos();
+                    y1 = controlPoints[i - 1][j].getTrueYPos();
+                    x2 = controlPoints[i][j - 1].getTrueXPos();
+                    y2 = controlPoints[i][j - 1].getTrueYPos();
+                    AffineTransform af = new AffineTransform(x0, y0, x1, y1, x2, y2);
+                    GeneralPath destPath = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
+
+                    destPath.moveTo(nextPoints[i][j].getTrueXPos(), nextPoints[i][j].getTrueYPos());
+                    destPath.lineTo(nextPoints[i-1][j].getTrueXPos(), nextPoints[i-1][j].getTrueYPos());
+                    destPath.lineTo(nextPoints[i][j-1].getTrueXPos(), nextPoints[i][j-1].getTrueYPos());
+                    destPath.lineTo(nextPoints[i][j].getTrueXPos(), nextPoints[i][j].getTrueYPos());
+                    Graphics2D g2 = pic.createGraphics();
+
+                    // set up an alpha value for compositing as an example
+                    AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)0.5);
+                    g2.setComposite(ac);
+
+                    g2.clip(destPath);
+                    g2.setTransform(af);
+                    g2.drawImage(pic, 0, 0, null);
+                }
+            }
+        }
     }
 }
